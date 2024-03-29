@@ -1,0 +1,208 @@
+inbounds:
+- tag: mixed-in
+  listen: '127.0.0.1'
+  set_system_proxy: true # 是否设置系统代理
+  listen_port: 56666
+  sniff: true
+  tcp_fast_open: true
+  domain_strategy: prefer_ipv6
+  type: mixed
+log: {level: info, timestamp: false, disabled: false} # output: "box.log"
+
+experimental:
+  clash_api:
+    default_mode: Rule
+    external_controller: 127.0.0.1:58888
+  cache_file:
+    enabled: true
+    store_fakeip: true
+    cache_id: inko # If not empty, configuration specified data will use a separate store keyed by it.
+    # path: "" # cache.db will be used if empty.
+    # store_rdrc: true # Store rejected DNS response cache
+    # rdrc_timeout: ""
+
+ntp: # provides time for protocols like TLS/ss/VMess
+  enabled: false # UDP一不稳就崩啊，离谱
+  server: time.apple.com
+  server_port: 123
+  interval: 30m
+  detour: NOPROXY  # UDP support needed
+
+# proxies: &proxies # 妈的sing-box json不允许多写
+#   - tag: proxy_example
+#     type: vless
+#     uuid: xx
+
+outbounds: # 策略和策略组
+  # - <<: *proxies
+  - tag: proxy_example
+    server: xxx.io
+    server_port: 443
+    tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}
+    transport:
+      early_data_header_name: Sec-WebSocket-Protocol
+      max_early_data: 2048
+      path: //////
+      type: ws
+    type: vless
+    uuid: xx
+
+  - {tag: REJECT, type: block} # 策略：拒绝
+  - {tag: NOPROXY, type: direct} # 策略：直连, NOPROXY = DIRECT, CENSORED = CN
+  - {tag: DNSOUT, type: dns}
+  # Proxy-Groups
+  # 常规出口选择
+  - tag: PROXY  # 代理出口
+    type: selector
+    interrupt_exist_connections: false
+    outbounds:
+      - AUTO
+      - MANUAL
+      - proxy_example
+    default: AUTO
+  - tag: CENSORED  # 国内出口
+    type: selector
+    interrupt_exist_connections: false
+    outbounds:
+      - NOPROXY
+      - PROXY
+    default: NOPROXY
+  - tag: ADBlocks  # 广告、隐私保护出口
+    type: selector
+    interrupt_exist_connections: false
+    outbounds:
+      - REJECT
+      - NOPROXY
+      - CENSORED
+      - PROXY
+    default: REJECT
+  - tag: MANUAL  # 出口手动选择
+    type: selector
+    interrupt_exist_connections: false
+    outbounds:
+      - proxy_example
+      - NOPROXY
+    default: proxy_example
+  - tag: AUTO  # 出口自动选择
+    type: urltest
+    interrupt_exist_connections: false
+    outbounds:
+      - proxy_example
+    url: http://aka.ms
+    interval: 3m
+    tolerance: 100 # milliseconds, 50 by default
+    idle_timeout: 30m # 30min by default
+  # 路由出口选择
+  - {tag: Apple-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: iCloud-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: Microsoft-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: OpenAI-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: Telegram-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: Google-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: Youtube-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: Netflix-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+  - {tag: GamerTW-Route, default: PROXY, type: selector, interrupt_exist_connections: false, outbounds: [PROXY, NOPROXY]}
+
+dns:
+  disable_cache: false
+  disable_expire: true
+  servers: # DNS Providers
+  - tag: domestic
+    address: tls://223.6.6.6:853
+    detour: NOPROXY # 出站代理
+    strategy: prefer_ipv4
+
+  - tag: testdns
+    address: tls://8.8.4.4:853
+    #address_resolver: domestic
+    detour: PROXY
+
+  - address: local
+    detour: NOPROXY # 出站，Default outbound will be used if empty.
+    tag: backup
+    
+  rules:
+    - server: backup
+      type: logical
+      mode: or
+      rules: 
+        - domain_suffix: [".cn"]
+        - outbound: [CENSORED]
+      disable_cache: false
+      invert: false
+      rewrite_ttl: 100
+    - server: testdns
+      type: logical
+      mode: and
+      disable_cache: false
+      rewrite_ttl: 100
+      rules: 
+        - inbound:
+          - mixed-in
+
+route:
+  rule_set: # Rule Providers
+  - { tag: ads,           url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/ads.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: applications,  url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/applications.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: private,       url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/private.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: microsoft-cn,  url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/microsoft-cn.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: apple-cn,      url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/apple-cn.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: google-cn,     url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/google-cn.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: games-cn,      url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/games-cn.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: networktest,   url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/networktest.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: proxy,         url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/proxy.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: cn,            url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/cn.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: telegramip,    url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/telegramip.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: privateip,     url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/privateip.srs, download_detour: NOPROXY, format: binary, type: remote}
+  - { tag: cnip,          url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/cnip.srs, download_detour: NOPROXY, format: binary, type: remote}
+  final: PROXY # MATCH
+  rules:
+    - { protocol: [ dns ], outbound: DNSOUT }
+    - { clash_mode: Direct, outbound: NOPROXY } # Clash API兼容
+    - { clash_mode: Global, outbound: PROXY } # Clash API兼容
+    - outbound: CENSORED
+      process_name: #// 安卓，部分国产软件
+        - cn.gov.tax.its # 个人所得税
+        - cn.hsa.app # 医保
+        - com.tmri.app.main # 交管12123
+        - com.MobileTicket # 铁路12306
+        - com.icbc # 工商银行
+        - com.unionpay # 云闪付
+        - com.eg.android.AlipayGphone # 支付宝
+        - com.taobao.taobao # 淘宝
+        - com.taobao.idlefish # 闲鱼
+        - com.sankuai.meituan # 美团
+        - ctrip.android.view # 携程
+        - com.jingdong.app.mall # 京东
+        - com.xunmeng.pinduoduo # 拼多多
+        - com.dianping.v1 # 大众点评
+        - com.greenpoint.android.mc10086.activity # 10086离谱
+        - com.sinovatech.unicom.ui # 联通
+        - com.qq.ac.android # 腾讯漫画
+        - com.tencent.weread # 微信读书
+        - com.chaoxing.mobile # 学习通
+        - com.crirp.zhipu # 智谱（业余无线电）
+        - com.autonavi.minimap # 高德地图
+        - com.eusoft.eudic # 欧路词典
+        - com.eusoft.frhelper # 欧路法语词典
+        - com.baidu.newapp # 文心一言
+        - com.baidu.tieba # 百度贴吧
+        - com.dragon.read # 番茄小说
+        - com.tencent.qqmusic # QQ音乐
+        - com.kugou.android.lite # 酷狗概念版
+        - com.ss.android.ugc.aweme # 抖音
+        - com.tencent.mm # 微信
+    - { rule_set: [ ads ], outbound: ADBlocks } #// 自定义规则优先放前面
+    - { rule_set: [ applications ], outbound: CENSORED } # 直连软件, 基于ProcessName
+    - { port_range: [ "6881:6889" ], outbound: CENSORED } # BT流量直连
+    - { rule_set: [ private ], outbound: NOPROXY } # 私有网络
+    - { rule_set: [ microsoft-cn ], outbound: Microsoft-Route } # 国内可用的微软服务
+    - { rule_set: [ apple-cn ], outbound: Apple-Route } # 国内可用的苹果服务
+    - { rule_set: [ google-cn ], outbound: Google-Route } # 谷歌服务
+    - { rule_set: [ games-cn ], outbound: MANUAL } # 游戏平台
+    - { rule_set: [ networktest ], outbound: PROXY } # 网络测试
+    - { rule_set: [ proxy ], outbound: PROXY } # 代理域名
+    - { rule_set: [ cn ], outbound: CENSORED } # 直连
+    - { rule_set: [ telegramip ], outbound: PROXY } # Telegram
+    - { rule_set: [ privateip ],  outbound: NOPROXY } # 私有网络
+    - { rule_set: [ cnip ], outbound: CENSORED } # 国内 IP
