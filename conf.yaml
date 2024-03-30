@@ -1,4 +1,4 @@
-# sing-box version 1.8.10
+# sing-box version 1.8.10, 1.9.0-rc.3
 
 log: {level: info, timestamp: true, disabled: false} # output: "box.log"
 inbounds: # TUN模式 参数
@@ -120,32 +120,32 @@ outbounds: # 策略和策略组
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,nas03,nas04,nas05,nas06,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
   
-  - {tag: proxy0,server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: gitap, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: gitms, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: drv01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: drv02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: drv03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: nas01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: nas02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: nas03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: nas04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: nas05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: nas06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: aim01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: aim02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: aim03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: aim04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: aim05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: aim06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git07, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
-  - {tag: git08, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, early_data_header_name: Sec-WebSocket-Protocol, max_early_data: 2064, type: ws}, type: vless, domain_strategy: prefer_ipv4, tcp_fast_open: true, uuid: _}
+  - {tag: proxy0,server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: gitap, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: gitms, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: drv01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: drv02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: drv03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: nas01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: nas02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: nas03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: nas04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: nas05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: nas06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: aim01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: aim02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: aim03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: aim04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: aim05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: aim06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git07, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: git08, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
   
 dns:
   disable_cache: false
@@ -157,7 +157,7 @@ dns:
     - { tag: dns_block, address: rcode://refused }
     # - { tag: dns_fakeip, address: fakeip }
     # - { tag: dns_google, address: tls://dns.google, detour: PROXY, address_resolver: dns_alidns }
-    - { tag: dns_open, address: "https://example.sing-box-conf.io/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
+    - { tag: dns_open, address: "https://example.sing-box-conf.pages.dev/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
     # - { tag: dns_backup, address: local, detour: NOPROXY }
 
   rules:
@@ -314,6 +314,10 @@ route:
       rule_set:
         - geoip-cn
         - geosite-cn
+    - {outbound: Telegram-Route, process_name: [telegram.exe], package_name: [tw.nekomimi.nekogram, org.telegram.messenger.web, org.telegram.messenger]}
+    - {outbound: Youtube-Route, package_name: [com.google.android.youtube]}
+    - {outbound: Google-Route, package_name: [com.android.vending,com.google.android.tts,com.google.android.apps.translate,com.google.android.inputmethod.latin]}
+    - {outbound: Microsoft-Route, process_name: [OneNote.exe,OneDrive.exe], package_name: [com.microsoft.copilot,com.microsoft.skydrive,com.microsoft.office.onenote,com.github.jing332.tts_server_android]}
     - outbound: CENSORED # 安卓，部分国产软件
       process_name: 
         - com.tencent.mm # 微信
