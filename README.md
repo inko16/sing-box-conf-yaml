@@ -11,7 +11,7 @@ bash on windows(recommended)(admin needed when using tun mode):
 - 路由规则不完善并且逻辑混乱
 - 未测试GUI客户端（目前使用命令行）
 - dns规则需要完善
-- 节点不支持udp的情况下打开https（h3 quic）时不回落到h2（好奇怪哦）
+- 节点不支持udp的情况下打开https（h3 quic）时不回落到h2（好奇怪哦，好像tun这边mixed stack的问题）
 - ...
 
 ---
