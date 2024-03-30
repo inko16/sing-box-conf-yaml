@@ -7,11 +7,11 @@ bash on windows(recommended)(admin needed when using tun mode):
 ```
 ---
 ### 进度
-- 正常工作：mixed, tun(windows), Android-Client
-- 未测试Windows GUI客户端(没有官方的)
+- [fatal] 在无ipv6环境下，微信内无法直连。（DNS被解析为v6，但直连环境不支持）
 - 路由规则需要完善
 - dns规则需要完善
-- 节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2（好奇怪哦，好像tun这边mixed stack的问题）
+- tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2
+- 正常工作：mixed, tun(windows), Android-Client
 - ...
 
 ---
