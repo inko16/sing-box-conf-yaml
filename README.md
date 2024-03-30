@@ -1,23 +1,22 @@
 # # Still working
 
-bash on windows(recommended):
+bash on windows(recommended)(admin needed when using tun mode):
 ```
 ./jsonyaml.py conf.yaml > $TMP/singbox-test.json && ./sing-box run -c $TMP/singbox-test.json
 ```
+---
+### 进度
+- http代理(mixed)正常
+- tun模式不正常工作
+- 路由规则不完善并且逻辑混乱
+- 未测试GUI客户端（目前使用命令行）
+- ...
 
 ---
-```
-jsonyaml.py a.json > a.yaml
-cat a.json | jsonyaml.py > a.yaml
-jsonyaml.py b.yaml > b.json
-
-Windows CMD:
-jsonyaml.py > a.yaml
-Right Click (Paste json)
-Enter(New Line)
-Ctrl+Z ^Z(EOF) Enter
-```
-
+### 路由思路：
+- 【神奇流量】常用的部分走direct
+- 一些不怎么登陆的、可能影响隐私的【神奇流量】走proxy
+- 其余统统走proxy
 
 ---
 ### Why this project:
@@ -31,7 +30,16 @@ Ctrl+Z ^Z(EOF) Enter
 - 别问我为啥不改singbox，我想兼容官方版，我不确定哪个修改版是最广泛使用的，不像人家mihomo
 
 ---
-### 路由思路：
-- 【神奇流量】常用的部分走direct
-- 一些不怎么登陆的、可能影响隐私的【神奇流量】走proxy
-- 其余统统走proxy
+jsonyaml.py可以清晰看到json和yaml几乎是同一个东西，但可读性一个天上一个地下。
+```
+# pip install pyyaml
+jsonyaml.py a.json > a.yaml
+cat a.json | jsonyaml.py > a.yaml
+jsonyaml.py b.yaml > b.json
+
+Windows CMD:
+jsonyaml.py > a.yaml
+Right Click (Paste json)
+Enter(New Line)
+Ctrl+Z ^Z(EOF) Enter
+```
