@@ -24,7 +24,11 @@ inbounds:
 log: {level: info, timestamp: true, disabled: false} # output: "box.log"
 
 experimental:
-  clash_api: {external_controller: 127.0.0.1:11205, default_mode: Rule}
+  clash_api: 
+    external_controller: 127.0.0.1:9090 # 这ui不用9090不方便
+    default_mode: Rule
+    external_ui_download_url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+    external_ui_download_detour: "PROXY"
   cache_file:
     enabled: true
     store_fakeip: true
@@ -122,7 +126,7 @@ dns:
     # - { tag: dns_alidns, address: tls://223.5.5.5, detour: NOPROXY }
     - { tag: dns_tencent, address: tls://120.53.53.53, detour: NOPROXY, address_strategy: prefer_ipv4}
     - { tag: dns_tencent2, address: tls://1.12.12.12, detour: NOPROXY, address_strategy: prefer_ipv4}
-    # - { tag: dns_block, address: rcode://refused }
+    - { tag: dns_block, address: rcode://refused }
     # - { tag: dns_fakeip, address: fakeip }
     # - { tag: dns_google, address: tls://dns.google, detour: PROXY, address_resolver: dns_alidns }
     - { tag: dns_open, address: "https://example.sing-box-conf.io/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
