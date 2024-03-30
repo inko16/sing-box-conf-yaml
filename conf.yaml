@@ -120,55 +120,53 @@ outbounds: # 策略和策略组
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,nas03,nas04,nas05,nas06,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
   
-  - {tag: proxy0,server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: gitap, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: gitms, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: drv01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: drv02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: drv03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git07, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git08, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: proxy0,server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: gitap, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: gitms, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: drv01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: drv02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: drv03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: nas01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: nas02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: nas03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: nas04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: nas05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: nas06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: aim01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: aim02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: aim03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: aim04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: aim05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: aim06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git07, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
+  - {tag: git08, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /,  type: ws}, type: vless, uuid: _}
   
 dns:
   disable_cache: false
   disable_expire: true
   servers: # DNS Providers, 个人偏好必须加密
-    # - { tag: dns_alidns, address: tls://223.5.5.5, detour: NOPROXY } 据说alidns有过污染的前科
+    - { tag: dns_alidns, address: tls://223.5.5.5, detour: NOPROXY } 
     - { tag: dns_tencent, address: tls://120.53.53.53, detour: NOPROXY, address_strategy: prefer_ipv4}
     - { tag: dns_tencent2, address: tls://1.12.12.12, detour: NOPROXY, address_strategy: prefer_ipv4}
     - { tag: dns_block, address: rcode://refused }
     # - { tag: dns_fakeip, address: fakeip }
     # - { tag: dns_google, address: tls://dns.google, detour: PROXY, address_resolver: dns_alidns }
-    - { tag: dns_open, address: "https://example.sing-box-conf.pages.dev/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
-    # - { tag: dns_backup, address: local, detour: NOPROXY }
-
+    - { tag: dns_open, address: "https://example.sing-box-conf.io/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent, address_strategy: prefer_ipv4 }
   rules:
-    # - { clash_mode: Direct, server: dns_alidns }
-    # - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1}
-    - { outbound: ADSPAM, server: dns_block} # 逻辑怪怪的，应该先查询dns才对。tun模式可能出问题。后面改吧
-    # - { rule_set: cn, server: dns_tencent2}
-    - { outbound: CENSORED, server: dns_tencent2}
+    # - { outbound: any, server: dns_alidns }
+    - { clash_mode: Direct, server: dns_alidns }
+    - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1}
+    - { rule_set: geosite-cn, server: dns_tencent2}
+    - { rule_set: geosite-ads, server: dns_block}
     # - { outbound: PROXY, server: dns_open}
   final: dns_open
-  # strategy: prefer_ipv4
+  strategy: prefer_ipv4
   fakeip: { enabled: true, inet4_range: 198.18.0.0/15, inet6_range: fc00::/18 }
 
 route:
@@ -195,7 +193,7 @@ route:
     # 地址& (domain|domain_suffix|domain_keyword|domain_regex|ip_cidr|ip_is_private)&
     # 端口& (port|port_range)&
     # 来源& (source_ip_cidr|source_ip_is_private)&(source_port|source_port_range)&
-    # 其他  other fields
+    # 其他  other fields (process_name, package_name), 遵循&&而不是||。
     - outbound: ADSPAM # 来自手机系统的矢
       type: logical
       mode: or
@@ -314,12 +312,25 @@ route:
       rule_set:
         - geoip-cn
         - geosite-cn
-    - {outbound: Telegram-Route, rules: [process_name: [Telegram.exe], package_name: [tw.nekomimi.nekogram, org.telegram.messenger.web, org.telegram.messenger]],type: logical,mode: or}
-    - {outbound: Youtube-Route, package_name: [com.google.android.youtube]}
-    - {outbound: Google-Route, package_name: [com.android.vending,com.google.android.tts,com.google.android.apps.translate,com.google.android.inputmethod.latin]}
-    - {outbound: Microsoft-Route, rules: [process_name: [OneNote.exe,OneDrive.exe], package_name: [com.microsoft.copilot,com.microsoft.skydrive,com.microsoft.office.onenote,com.github.jing332.tts_server_android]],type: logical,mode: or}
+    - outbound: Telegram-Route # TG先按进程匹配就行
+      rules: [process_name: [Telegram.exe], package_name: [tw.nekomimi.nekogram, org.telegram.messenger.web, org.telegram.messenger]]
+      type: logical
+      mode: or
+    - outbound: Youtube-Route
+      package_name: [com.google.android.youtube]
+    - outbound: Google-Route # 谷歌 进程匹配
+      package_name: [com.android.vending,com.google.android.tts,com.google.android.apps.translate,com.google.android.inputmethod.latin]
+    - outbound: Microsoft-Route # 主要是进程匹配
+      rules: 
+        - process_name: [OneNote.exe,OneDrive.exe]
+        - package_name: [com.microsoft.copilot,com.microsoft.skydrive,com.microsoft.office.onenote,com.github.jing332.tts_server_android]
+        - domain_keyword: [www.bing.com, copilot.microsoft.com]
+      type: logical
+      mode: or
+    - outbound: OpenAI-Route
+      package_name: [com.openai.chatgpt] # nm非要锁ip，给你还单独开一行路由
     - outbound: CENSORED # 安卓，部分国产软件
-      process_name: 
+      package_name: 
         - com.tencent.mm # 微信
     # - { rule_set: [ ads ], outbound: ADSPAM } #// 自定义规则优先放前面
     # - { rule_set: [ applications ], outbound: CENSORED } # 直连软件, 基于ProcessName
