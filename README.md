@@ -7,10 +7,11 @@ bash on windows(recommended)(admin needed when using tun mode):
 ---
 ### 进度
 - http代理(mixed)正常
-- tun模式不正常工作
+- tun模式正常工作
 - 路由规则不完善并且逻辑混乱
 - 未测试GUI客户端（目前使用命令行）
-- dns规则离谱，估计tun就是因为这个不干的
+- dns规则需要完善
+- 节点不支持udp的情况下打开https（h3 quic）时不回落到h2（好奇怪哦）
 - ...
 
 ---
