@@ -38,12 +38,8 @@ if __name__ == "__main__":
     try:
         if len(sys.argv) >= 2:
             with open(sys.argv[1], 'r', encoding='utf-8') as file:
-                print(
-                    convert_stdin_to_stdout(file.read())
-                )
+                print(convert_stdin_to_stdout(file.read()))
         else:
-            print(
-                convert_stdin_to_stdout(sys.stdin.read())
-            )
+            print(convert_stdin_to_stdout(sys.stdin.read()))
     except Exception as e:
         sys.stderr.write(f"convertion error: {str(e)}\n")
