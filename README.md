@@ -10,7 +10,7 @@ bash on windows(recommended)(admin needed when using tun mode):
 - [fatal] 在无ipv6环境下，微信内无法直连。（DNS被解析为v6，但直连环境不支持）
 - 路由规则需要完善
 - dns规则需要完善
-- tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2
+- tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2。curl没问题，chrome不行
 - 正常工作：mixed, tun(windows), Android-Client
 - ...
 
