@@ -39,6 +39,9 @@ jsonyaml.py可以清晰看到json和yaml几乎是同一个东西，但可读性�
 jsonyaml.py a.json > a.yaml
 cat a.json | jsonyaml.py > a.yaml
 jsonyaml.py b.yaml > b.json
+---
+
+
 
 Windows CMD:
 jsonyaml.py > a.yaml
@@ -46,3 +49,9 @@ Right Click (Paste json)
 Enter(New Line)
 Ctrl+Z ^Z(EOF) Enter
 ```
+geosite srs编译记录
+https://github.com/SagerNet/sing-geosite/actions/runs/8311894714/job/22746155812
+
+geosite 来源
+https://github.com/v2fly/domain-list-community/tree/4pr_scholar_non_cn/data
+
