@@ -10,6 +10,7 @@ bash on windows(recommended)(admin needed when using tun mode):
 - tun模式不正常工作
 - 路由规则不完善并且逻辑混乱
 - 未测试GUI客户端（目前使用命令行）
+- dns规则离谱，估计tun就是因为这个不干的
 - ...
 
 ---
