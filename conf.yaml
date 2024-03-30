@@ -1,14 +1,26 @@
 # sing-box version 1.8.10,  go1.22.1 windows/amd64
 
 inbounds:
-- tag: mixed-in
-  listen: '127.0.0.1'
-  set_system_proxy: true # 是否设置系统代理
-  listen_port: 51201
-  sniff: true
-  tcp_fast_open: true
-  domain_strategy: prefer_ipv6
-  type: mixed
+  - tag: mixed-in
+    listen: '127.0.0.1'
+    set_system_proxy: true # 自动设置系统代理
+    listen_port: 51201
+    sniff: true
+    tcp_fast_open: true
+    domain_strategy: prefer_ipv6
+    type: mixed
+  # - tag: tun-in # sudo needed # 工作不正常，后面再修
+  #   interface_name: inkotun
+  #   type: tun
+  #   auto_route: true
+  #   strict_route: true
+  #   stack: mixed
+  #   mtu: 9000
+  #   inet4_address: 172.19.0.1/30
+  #   inet6_address: fdfe:dcba:9876::1/126
+  #   domain_strategy: prefer_ipv6
+  #   exclude_package:
+  #   - com.android.captiveportallogin
 log: {level: info, timestamp: true, disabled: false} # output: "box.log"
 
 experimental:
@@ -119,7 +131,7 @@ dns:
   rules:
     # - { clash_mode: Direct, server: dns_alidns }
     # - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1}
-    - { outbound: ADBlocks, server: dns_block}
+    - { outbound: ADBlocks, server: dns_block} # 逻辑怪怪的，应该先查询dns才对。tun模式可能出问题。后面改吧
     # - { rule_set: cn, server: dns_tencent2}
     - { outbound: CENSORED, server: dns_tencent2}
     # - { outbound: PROXY, server: dns_open}
@@ -128,6 +140,8 @@ dns:
   fakeip: { enabled: true, inet4_range: 198.18.0.0/15, inet6_range: fc00::/18 }
 
 route:
+  auto_detect_interface: true
+  override_android_vpn: true
   rule_set: # Rule Providers
    - { tag: ads,          url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/ads.srs, download_detour: NOPROXY, format: binary, type: remote}
    - { tag: applications, url: https://cdn.jsdelivr.net/gh/DustinWin/ruleset_geodata@sing-box-ruleset/applications.srs, download_detour: NOPROXY, format: binary, type: remote}
