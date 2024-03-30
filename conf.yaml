@@ -3,29 +3,30 @@
 inbounds:
   - tag: mixed-in
     listen: '127.0.0.1'
-    set_system_proxy: true # 自动设置系统代理
+    set_system_proxy: false # 自动设置系统代理
     listen_port: 51201
     sniff: true
     tcp_fast_open: true
     domain_strategy: prefer_ipv6
     type: mixed
-  # - tag: tun-in # sudo needed # 工作不正常，后面再修
-  #   interface_name: inkotun
-  #   type: tun
-  #   auto_route: true
-  #   strict_route: true
-  #   stack: mixed
-  #   mtu: 9000
-  #   inet4_address: 172.19.0.1/30
-  #   inet6_address: fdfe:dcba:9876::1/126
-  #   domain_strategy: prefer_ipv6
-  #   exclude_package:
-  #   - com.android.captiveportallogin
+  - tag: tun-in # sudo needed # 工作不正常，后面再修
+    interface_name: inkotun
+    type: tun
+    auto_route: true
+    strict_route: true
+    stack: system
+    sniff: true
+    mtu: 9000
+    inet4_address: 172.19.0.1/30
+    inet6_address: fdfe:dcba:8964::1/126
+    domain_strategy: prefer_ipv6
+    exclude_package:
+    - com.android.captiveportallogin
 log: {level: info, timestamp: true, disabled: false} # output: "box.log"
 
 experimental:
   clash_api: 
-    external_controller: 127.0.0.1:9090 # 这ui不用9090不方便
+    external_controller: 127.0.0.1:9090
     default_mode: Rule
     external_ui_download_url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
     external_ui_download_detour: "PROXY"
@@ -55,7 +56,7 @@ outbounds: # 策略和策略组
     transport:
       early_data_header_name: Sec-WebSocket-Protocol
       max_early_data: 2064
-      path: //////node1
+      path: //////
       type: ws
     type: vless
     domain_strategy: prefer_ipv4
