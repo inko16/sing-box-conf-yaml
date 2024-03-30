@@ -27,9 +27,10 @@ bash on windows(recommended)(admin needed when using tun mode):
 
 ---
 ### 吐槽：
-- yaml json明明差不多，人家小猫咪配置能写的那么强，这音乐盒一大堆括号看着都头疼，音乐盒何必用json呢
+- yaml json明明差不多，人家小猫咪配置能写的那么舒服，这音乐盒一大堆括号看着都头疼，音乐盒何必用json呢
 - 音乐盒你官方版为什么不搞node provider啊喂，json还没yaml灵活，yaml里引入写个花活还给我报错呜
 - 别问我为啥不改singbox，我想兼容官方版，我不确定哪个修改版是最广泛使用的，不像人家mihomo
+- 吐槽归吐槽，singbox牛逼
 
 ---
 jsonyaml.py可以清晰看到json和yaml几乎是同一个东西，但可读性一个天上一个地下。
