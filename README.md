@@ -53,5 +53,4 @@ geosite srs编译记录
 https://github.com/SagerNet/sing-geosite/actions/runs/8311894714/job/22746155812
 
 geosite 来源
-https://github.com/v2fly/domain-list-community/tree/4pr_scholar_non_cn/data
-
+https://github.com/v2fly/domain-list-community/tree/master/data
