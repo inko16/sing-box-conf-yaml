@@ -1,4 +1,5 @@
-# # Still working
+# sing-box 配置文件 YAML版，可直接转为json
+## # 勉强能用了
 
 bash on windows(recommended)(admin needed when using tun mode):
 ```
