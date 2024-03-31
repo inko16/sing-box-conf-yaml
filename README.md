@@ -7,11 +7,11 @@ bash on windows(recommended)(admin needed when using tun mode):
 ```
 ---
 ### 进度
-- [fatal] 在无ipv6环境下，微信内无法直连。（DNS被解析为v6，但直连环境不支持）
 - 路由规则需要完善
 - dns规则需要完善
 - tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2。curl没问题，chrome不行
 - 正常工作：mixed, tun(windows), Android-Client
+- 开启sniff-override，好像变慢了，fakeip大概需要配置
 - ...
 
 ---
@@ -40,9 +40,6 @@ jsonyaml.py a.json > a.yaml
 cat a.json | jsonyaml.py > a.yaml
 jsonyaml.py b.yaml > b.json
 ---
-
-
-
 Windows CMD:
 jsonyaml.py > a.yaml
 Right Click (Paste json)
