@@ -7,11 +7,10 @@ bash on windows(recommended)(admin needed when using tun mode):
 ```
 ---
 ### 进度
-- 路由规则需要完善
-- dns规则需要完善
+- 默认使用tun模式，Windows下需要管理员权限，Android下正常工作。mixed模式应该是正常的。
+- 路由规则需要完善, dns规则需要完善
 - tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2。curl没问题，chrome不行
-- 正常工作：mixed, tun(windows), Android-Client
-- 开启sniff-override，好像变慢了，fakeip大概需要配置
+- 开启sniff-override，好像变慢了，fakeip在tun模式默认使用，弥补dns解析和sniff的损耗。
 - ...
 
 ---
