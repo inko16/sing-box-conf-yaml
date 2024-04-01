@@ -23,7 +23,7 @@ def yaml_to_json(yaml_str):
 def yaml_to_json_min(yaml_str):
     try:
         data = yaml.safe_load(yaml_str)
-        json_str = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
+        json_str = json.dumps(data, separators=(',', ':'), ensure_ascii=False) 
         return json_str
     except Exception as e:
         raise e
