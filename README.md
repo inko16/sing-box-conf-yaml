@@ -47,3 +47,9 @@ Ctrl+Z ^Z(EOF) Enter
 ](https://github.com/SagerNet/sing-geosite/actions/runs/8311894714/job/22746155812
 ), [geosite 来源](https://github.com/v2fly/domain-list-community/tree/master/data
 )
+
+---
+### 备注
+- 随便用，但发布在Github上以此修改的希望可以留个这个repo的link
+- 强烈希望机场主们能用用sing-box，见Why this project
+- 文件内的一些数字视作随机数，我脸砸键盘打的。
