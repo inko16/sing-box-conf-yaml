@@ -95,7 +95,7 @@ outbounds: # 策略和策略组
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
     
-  - {tag: AUTO, type: urltest, url: http://aka.ms , interval: 3m, tolerance: 100 , idle_timeout: 30m, outbounds: [proxy0
+  - {tag: AUTO, type: urltest, url: http://github.com , interval: 3m, tolerance: 100 , idle_timeout: 30m, outbounds: [proxy0
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
 
