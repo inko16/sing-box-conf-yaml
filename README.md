@@ -1,9 +1,11 @@
 # sing-box 配置文件 YAML版，可直接转为json
-## # 勉强能用了
+## # 可以日常使用了
 
-bash on windows(recommended)(admin needed when using tun mode):
-```
-./jsonyaml.py conf.yaml > $TMP/singbox-test.json && ./sing-box run -c $TMP/singbox-test.json
+从yaml"编译"为json（yaml可以转为等价json）
+``` # bash on windows(recommended)(admin needed):
+
+./jsonyaml.py conf.yaml min > $TMP/singbox-test.json && \
+./sing-box run -c $TMP/singbox-test.json
 ```
 ---
 ### 进度
@@ -15,12 +17,6 @@ bash on windows(recommended)(admin needed when using tun mode):
 ---
 ### 重大缺陷
 - 官方版不支持node providers还得额外把节点塞进去。好麻烦啊不想用第三方
----
-### 路由思路：
-- 【神奇流量】常用的部分走direct
-- 一些不怎么登陆的、可能影响隐私的【神奇流量】走proxy
-- 其余统统走proxy
-
 ---
 ### Why this project:
 - Sing-box on iOS is free
