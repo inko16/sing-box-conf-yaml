@@ -12,7 +12,9 @@ bash on windows(recommended)(admin needed when using tun mode):
 - tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2。curl没问题，chrome不行
 - 开启sniff-override，好像变慢了，fakeip在tun模式默认使用，弥补dns解析和sniff的损耗。
 - ...
-
+---
+### 重大缺陷
+- 官方版不支持node providers还得额外把节点塞进去。好麻烦啊不想用第三方
 ---
 ### 路由思路：
 - 【神奇流量】常用的部分走direct
