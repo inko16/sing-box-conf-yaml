@@ -20,6 +20,14 @@ def yaml_to_json(yaml_str):
     except Exception as e:
         raise e
 
+def yaml_to_json_min(yaml_str):
+    try:
+        data = yaml.safe_load(yaml_str)
+        json_str = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
+        return json_str
+    except Exception as e:
+        raise e
+
 def convert_stdin_to_stdout(input_data):
     try:
         # Determine format based on the first character
@@ -38,8 +46,18 @@ if __name__ == "__main__":
     try:
         if len(sys.argv) >= 2:
             with open(sys.argv[1], 'r', encoding='utf-8') as file:
-                print(convert_stdin_to_stdout(file.read()))
+                if len(sys.argv) >= 3 : # publish
+                    if sys.argv[2]=="min":
+                        print(
+                            yaml_to_json_min(file.read())
+                        )
+                else:
+                    print(
+                        convert_stdin_to_stdout(file.read())
+                    )
         else:
-            print(convert_stdin_to_stdout(sys.stdin.read()))
+            print(
+                convert_stdin_to_stdout(sys.stdin.read())
+            )
     except Exception as e:
         sys.stderr.write(f"convertion error: {str(e)}\n")
