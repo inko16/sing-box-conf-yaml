@@ -14,8 +14,8 @@ inbounds: # TUN模式 参数 v4优先
     sniff_override_destination: true # 系统、浏览器使用DoT/DoH时由于tun启动了ipv6，他会优先解析v6以至于DIRECT不出去
     mtu: 9000
     # https://en.wikipedia.org/wiki/Reserved_IP_addresses
-    inet4_address: 198.18.125.125/30
-    inet6_address: fcab:cdef:8964::6/126
+    inet4_address: 198.41.233.125/30 # inet4_address: 198.18.125.125/30
+    inet6_address: 8866:7d1c:5:8964:1126:0:1d1:6/126
     exclude_package:
       - com.android.captiveportallogin # wifi登录
       - cn.gov.tax.its # 个人所得税
@@ -24,6 +24,9 @@ inbounds: # TUN模式 参数 v4优先
       - com.MobileTicket # 铁路12306
       - com.icbc # 工商银行
       - com.unionpay # 云闪付
+      - com.greenpoint.android.mc10086.activity # 10086离谱
+      - com.sinovatech.unicom.ui # 联通
+      - com.crirp.zhipu # 智谱（业余无线电）
       - com.eg.android.AlipayGphone # 支付宝
       - com.taobao.taobao # 淘宝
       - com.taobao.idlefish # 闲鱼
@@ -34,12 +37,9 @@ inbounds: # TUN模式 参数 v4优先
       - com.dianping.v1 # 大众点评
       - com.bilibili.app.in # 哔哩哔哩play版
       - tv.danmuku.bili # 哔哩哔哩
-      - com.greenpoint.android.mc10086.activity # 10086离谱
-      - com.sinovatech.unicom.ui # 联通
       - com.qq.ac.android # 腾讯漫画
       - com.tencent.weread # 微信读书
       - com.chaoxing.mobile # 学习通
-      - com.crirp.zhipu # 智谱（业余无线电）
       - com.autonavi.minimap # 高德地图
       - com.eusoft.eudic # 欧路词典
       - com.eusoft.frhelper # 欧路法语词典
@@ -79,8 +79,8 @@ ntp: # 关了，需要UDP
   #   uuid: xx
 
 # PROXY CENSORED ADSPAM DNSOUT REJECT NOPROXY
-# Apple-Route iCloud-Route Microsoft-Route AI-Route Telegram-Route
-# Google-Route Youtube-Route Netflix-Route GamerTW-Route
+# Apple-Route  iCloud-Route  Microsoft-Route GamerTW-Route AI-Route
+# Google-Route Youtube-Route Telegram-Route  Netflix-Route 
 outbounds: # 策略和策略组
   # 出口、内置出口包装
   - {tag: PROXY, type: selector, default: AUTO, outbounds: [AUTO,MANUAL,NOPROXY]} # 代理出口
@@ -154,24 +154,31 @@ dns:
   disable_cache: false
   disable_expire: true
   servers: # DNS Providers, 个人偏好必须加密
-    - { tag: dns_alidns, address: tls://223.5.5.5, detour: CENSORED } 
+    - { tag: dns_china, address: 1.2.4.8, detour: CENSORED }
+    - { tag: dns_alidns, address: tls://223.5.5.5, detour: CENSORED }
+    - { tag: dns_alidns2, address: tls://223.6.6.6, detour: CENSORED }
     - { tag: dns_tencent, address: tls://120.53.53.53, detour: CENSORED}
     - { tag: dns_tencent2, address: tls://1.12.12.12, detour: CENSORED}
-    - { tag: dns_block, address: rcode://refused }
-    - { tag: dns_fakeip, address: fakeip }
     # - { tag: dns_google, address: tls://dns.google, detour: PROXY, address_resolver: dns_alidns }
+    # 注意：这个DNS地址必须改
     - { tag: dns_open, address: "https://example.sing-box-conf.io/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
+    # rcode://  success(No_Error); format_error; server_failure; 
+    # name_error(Domain_NoExist); not_implemented; refused(Query_Refused)
+    - { tag: dns_block, address: rcode://name_error }
+    - { tag: dns_fakeip, address: fakeip }
   rules:
     # - { outbound: any, server: dns_alidns }
     - { clash_mode: Direct, server: dns_alidns }
-    - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1}
-    - { rule_set: geosite-ads, server: dns_block}
-    - { rule_set: geosite-cn, server: dns_tencent2}
+    - { inbound: tun-in, query_type: [A,AAAA], server: dns_fakeip, rewrite_ttl: 1 }
+    - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1 }
+    - { rule_set: geosite-ads, server: dns_block }
+    - { rule_set: geosite-cn, server: dns_tencent2 }
     # - { outbound: CENSORED, server: dns_alidns}
     # - { outbound: PROXY, server: dns_open}
   final: dns_open
   strategy: prefer_ipv4
-  fakeip: { enabled: true, inet4_range: 198.18.0.0/15, inet6_range: fc00::/18 }
+  # fakeip: { enabled: true, inet4_range: 198.18.192.0/17, inet6_range: fc00::/18 }
+  fakeip: { enabled: true, inet4_range: 188.114.96.0/16, inet6_range: 2606:2606:8964:1126::/64 }
 
 route:
   auto_detect_interface: true
@@ -314,7 +321,7 @@ route:
       rule_set:
         - geoip-cn
         - geosite-cn
-    - outbound: Telegram-Route # TG先按进程匹配就行
+    - outbound: Telegram-Route # TG先按进程匹配就行 (我靠，居然大小写敏感，Windows下这要命啊)
       rules: [process_name: [Telegram.exe], package_name: [tw.nekomimi.nekogram, org.telegram.messenger.web, org.telegram.messenger], rule_set: [telegramip]]
       type: logical
       mode: or
