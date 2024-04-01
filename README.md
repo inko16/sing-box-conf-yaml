@@ -2,7 +2,8 @@
 ## # 可以日常使用了
 
 从yaml"编译"为json（yaml可以转为等价json）
-``` # bash on windows(recommended)(admin needed):
+```
+# bash on windows(recommended)(admin needed):
 
 ./jsonyaml.py conf.yaml min > $TMP/singbox-test.json && \
 ./sing-box run -c $TMP/singbox-test.json
@@ -19,7 +20,7 @@
 - 官方版不支持node providers还得额外把节点塞进去。好麻烦啊不想用第三方
 ---
 ### Why this project:
-- Sing-box on iOS is free
+- Sing-box on iOS is free 可以降低用户门槛，我希望更多人能够使用真正的网络
 - YAML is human-friendly
 
 ---
