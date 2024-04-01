@@ -169,9 +169,9 @@ dns:
   rules:
     # - { outbound: any, server: dns_alidns }
     - { clash_mode: Direct, server: dns_alidns }
-    - { inbound: tun-in, query_type: [A,AAAA], server: dns_fakeip, rewrite_ttl: 1 }
     - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1 }
     - { rule_set: geosite-ads, server: dns_block }
+    - { inbound: tun-in, query_type: [A,AAAA], server: dns_fakeip, rewrite_ttl: 1 }
     - { rule_set: geosite-cn, server: dns_tencent2 }
     # - { outbound: CENSORED, server: dns_alidns}
     # - { outbound: PROXY, server: dns_open}
