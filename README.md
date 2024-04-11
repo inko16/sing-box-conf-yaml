@@ -1,15 +1,20 @@
 # sing-box 配置文件 YAML版，可直接转为json
-### # 可以日常使用了
+### # 可以日常使用了，需要自己改节点
 
-从yaml"编译"为json（yaml可以转为等价json）
+从yaml"编译"为json（yaml可以转为等价json）. 使用示例
 ```
 # bash on windows(recommended)(admin needed):
 
 ./jsonyaml.py conf.yaml min > $TMP/singbox-test.json && \
 ./sing-box run -c $TMP/singbox-test.json
+
+# also bash on windows(admin), with cf worker yaml-json
+curl https://a.pages.dev/yamljson/a.github.io/conf/sing.yaml -o $TMP/singtmp.json && ~/singbox/sing-box run -c $TMP/singtmp.json
+# for your profile security you need to host it safely. this is just an example
+
 ```
 ---
-- 默认使用tun模式，Windows下需要管理员权限，Android下正常工作。mixed模式应该是正常的。
+- 默认使用tun模式，Windows下需要管理员权限，Android下正常工作。mixed模式(系统代理)好久没用了。
 ### 进度
 - 路由规则需要完善, dns规则需要完善
 - tun模式下，节点不支持udp的情况下打开https（h3 quic:8443）时不回落到h2。curl没问题，chrome不行
@@ -24,15 +29,27 @@
 ### Why this project:
 - Sing-box on iOS is free 可以降低用户门槛，我希望更多人能够使用真正的网络
 - YAML is human-friendly
-- Official sing-box conf, not third-party modified, so that iOS can use this.
+- Official sing-box conf, not for third-party modified client, so that iOS can use this.
 
 ---
 ### 吐槽：
 - yaml json明明差不多，人家小猫咪配置能写的那么舒服，这音乐盒一大堆括号看着都头疼，音乐盒何必用json呢
 - 音乐盒你官方版为什么不搞node provider啊喂，json还没yaml灵活，yaml里引入写个花活还给我报错呜
-- 吐槽归吐槽，音乐盒还是牛逼
+- 吐槽归吐槽，音乐盒确实还是牛逼
+---
+
+[geosite srs编译记录
+](https://github.com/SagerNet/sing-geosite/actions/runs/8311894714/job/22746155812
+), [geosite 来源](https://github.com/v2fly/domain-list-community/tree/master/data
+)
 
 ---
+### 备注
+- 随便用，但发布在Github上以此修改的希望可以留个这个repo的link
+- 强烈希望机场主们能用用sing-box，见Why this project
+- 文件内的一些数字视作随机数，我脸砸键盘打的。
+---
+本地用Python的pyyaml转换json示例：
 jsonyaml.py可以清晰看到json和yaml几乎是同一个东西，但可读性一个天上一个地下。
 ```
 # pip install pyyaml
@@ -44,13 +61,5 @@ jsonyaml.py > a.yaml
 Right Click (Paste json), Enter(New Line)
 Ctrl+Z ^Z(EOF) Enter
 ```
-[geosite srs编译记录
-](https://github.com/SagerNet/sing-geosite/actions/runs/8311894714/job/22746155812
-), [geosite 来源](https://github.com/v2fly/domain-list-community/tree/master/data
-)
-
 ---
-### 备注
-- 随便用，但发布在Github上以此修改的希望可以留个这个repo的link
-- 强烈希望机场主们能用用sing-box，见Why this project
-- 文件内的一些数字视作随机数，我脸砸键盘打的。
+cf worker 那个js需要改，需要改。
