@@ -1,4 +1,10 @@
 const yaml = await import("./jsyaml.js");
+// manually create jsyaml.js, content copy from below url:
+// https://github.com/nodeca/js-yaml/blob/master/dist/js-yaml.mjs
+
+// usage: https://yamljson.xx.workers.dev/yamljson/raw.githubusercontent.com/inko16/sing-box-conf-yaml/main/conf.yaml
+// to use inside GFW, you may need a custom domain, or deploy it on pages.dev
+
 export default {
   async fetch(request, env, ctx) { 
     let prefix = "/yamljson/";
