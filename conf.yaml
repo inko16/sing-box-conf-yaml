@@ -1,22 +1,21 @@
-# sing-box version 1.9.0-rc.3
+# sing-box version 1.8.11 / 1.9.0-rc.7
 
 log: {level: info, timestamp: false, disabled: false} # output: "box.log"
-inbounds: # TUN模式 参数 v4优先
+inbounds: # TUN模式
   - tag: tun-in # sudo needed on windows .. 
-    interface_name: inkotun
-    domain_strategy: prefer_ipv4
-    # 当本机网络不支持ipv6时，prefer ipv6会导致DNS解析出v6地址导致无法连接。
-    type: tun
     auto_route: true
+    interface_name: sing-tun
+    # domain_strategy: prefer_ipv4 # 有些垃圾酒店的垃圾路由不支持v6，4202年了都
+    type: tun
     strict_route: true
-    stack: system
+    stack: mixed
     sniff: true
-    sniff_override_destination: true # 系统、浏览器使用DoT/DoH时由于tun启动了ipv6，他会优先解析v6以至于DIRECT不出去
-    mtu: 9000
-    # https://en.wikipedia.org/wiki/Reserved_IP_addresses
-    inet4_address: 198.41.233.125/30 # inet4_address: 198.18.125.125/30
-    inet6_address: 8866:7d1c:5:8964:1126:0:1d1:6/126
-    exclude_package:
+    sniff_override_destination: true
+    inet4_address: 198.18.89.64/30 # https://en.wikipedia.org/wiki/Reserved_IP_addresses
+    inet6_address: 64:ff9b:1:8964:1126:8866::6/126
+    mtu: 1400 # https://en.wikipedia.org/wiki/Maximum_transmission_unit
+    exclude_package: # 安卓, 以下Apps绕过代理
+      # https://github.com/yangchuansheng/sing-box/blob/main/config-example.json
       - com.android.captiveportallogin # wifi登录
       - cn.gov.tax.its # 个人所得税
       - cn.hsa.app # 医保
@@ -24,9 +23,12 @@ inbounds: # TUN模式 参数 v4优先
       - com.MobileTicket # 铁路12306
       - com.icbc # 工商银行
       - com.unionpay # 云闪付
+      - cmb.pb # 招商银行
+      - cn.gov.pbc.dcep
       - com.greenpoint.android.mc10086.activity # 10086离谱
       - com.sinovatech.unicom.ui # 联通
       - com.crirp.zhipu # 智谱（业余无线电）
+      - com.netease.cloudmusic # 网易云音乐
       - com.eg.android.AlipayGphone # 支付宝
       - com.taobao.taobao # 淘宝
       - com.taobao.idlefish # 闲鱼
@@ -44,27 +46,43 @@ inbounds: # TUN模式 参数 v4优先
       - com.eusoft.eudic # 欧路词典
       - com.eusoft.frhelper # 欧路法语词典
       - com.baidu.newapp # 文心一言
-      - com.baidu.tieba # 百度贴吧
-      - com.dragon.read # 番茄小说
+      #- com.baidu.tieba # 百度贴吧，不常用
+      #- com.dragon.read # 番茄小说, 需要去广告
       - com.tencent.qqmusic # QQ音乐
       - com.kugou.android.lite # 酷狗概念版
       - com.ss.android.ugc.aweme # 抖音
+      - com.ss.android.lark
+      - com.ss.android.article.news
+      - com.sina.weibo # 微博
+      - com.xingin.xhs # 小红书
+      - com.tencent.wework # 企业微信
+      - com.unnoo.quan # 知识星球
+      - com.tencent.wemeet.app # 腾讯会议
+      - com.tencent.soter.soterserver
+      #- com.duolingo # 多邻国，需要去广告
   # - tag: mixed-in
   #   listen: 127.0.0.1 # 这个就不用了吧，windows下tun很好用
-  #   set_system_proxy: false # 自动设置系统代理, 安卓下需要Root。
+  #   set_system_proxy: false # 自动设置系统代理, 安卓下需要Root，为了安卓/Windows统一配置，就不用这个了
   #   listen_port: 51201
   #   sniff: true
   #   tcp_fast_open: true
   #   domain_strategy: prefer_ipv4
   #   type: mixed
+  # - tag: dns-in
+  #   type: direct
+  #   listen: 0.0.0.0
+  #   listen_port: 53
+  #   network: udp
 
 experimental: # Clash API 参数 :9090
   clash_api: 
-    external_controller: 127.0.0.1:9090
-    external_ui_download_url: https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip
-    external_ui_download_detour: PROXY
+    external_controller: 127.0.0.1:9090 # 这个是最方便了的，是external_ui的默认后端
     default_mode: Rule
-  cache_file: {enabled: true, store_fakeip: true, cache_id: inko } #, store_rdrc: true} # sing-box version 1.9.0-rc.3
+    # 也可以用 https://yacd.metacubex.one/，这个端口默认9090
+    external_ui: any_fxxking_empty
+    external_ui_download_url: https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip
+    external_ui_download_detour: PROXY
+  cache_file: {enabled: true, store_fakeip: false, cache_id: inko } #, store_rdrc: true}
 
 ntp: # 关了，需要UDP
   enabled: false # UDP一不稳就崩啊，离谱
@@ -82,27 +100,26 @@ ntp: # 关了，需要UDP
 # Apple-Route  iCloud-Route  Microsoft-Route GamerTW-Route AI-Route
 # Google-Route Youtube-Route Telegram-Route  Netflix-Route 
 outbounds: # 策略和策略组
-  # 出口、内置出口包装
-  - {tag: PROXY, type: selector, default: AUTO, outbounds: [AUTO,MANUAL,NOPROXY]} # 代理出口
-  - {tag: CENSORED, type: selector, default: NOPROXY, outbounds: [NOPROXY,PROXY,MANUAL]} # 国内出口
-  - {tag: ADSPAM, type: selector, default: REJECT, outbounds: [REJECT,NOPROXY,CENSORED,PROXY]} # 广告、隐私保护出口
+ # 出口、内置出口包装
   - {tag: REJECT, type: block} # 策略：拒绝
   - {tag: NOPROXY, type: direct, domain_strategy: prefer_ipv4} # 策略：直连, NOPROXY = DIRECT, CENSORED = CN
   - {tag: DNSOUT, type: dns} # 用于接管系统DNS
+  - {tag: PROXY, type: selector, default: AUTO, outbounds: [AUTO,MANUAL,NOPROXY]} # 代理出口
+  - {tag: CENSORED, type: selector, default: NOPROXY, outbounds: [NOPROXY,PROXY,MANUAL]} # 国内出口
+  - {tag: ADSPAM, type: selector, default: REJECT, outbounds: [REJECT,NOPROXY,CENSORED,PROXY]} # 广告、隐私保护出口
 
-  # 以下是代理列表、路由出口选择
+ # 以下是代理列表、路由出口选择
   - {tag: MANUAL, type: selector, default: proxy0, outbounds: [proxy0
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
-    
-  - {tag: AUTO, type: urltest, url: http://github.com , interval: 3m, tolerance: 100 , idle_timeout: 30m, outbounds: [proxy0
+  - {tag: AUTO, type: urltest, url: http://github.com , interval: 6m, tolerance: 100 , idle_timeout: 30m, outbounds: [proxy0
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
 
-  - {tag: Apple-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
+  - {tag: Apple-Route, default: NOPROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
-  - {tag: iCloud-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
+  - {tag: iCloud-Route, default: NOPROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
   - {tag: Microsoft-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
@@ -126,34 +143,36 @@ outbounds: # 策略和策略组
   - {tag: GamerTW-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
   ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
   ]}
-  
-  - {tag: proxy0,server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: gitap, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: gitms, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: drv01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: drv02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: drv03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: nas02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: aim06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git01, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git02, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git03, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git04, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git05, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git06, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git07, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  - {tag: git08, server: example.org , server_port: 443, tls: {enabled: true, utls: {enabled: true, fingerprint: chrome}}, transport: {path: /, type: ws}, type: vless, uuid: _}
-  
+ # 
+  - {tag: proxy0,server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: gitap, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: gitms, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: drv01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: drv02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: drv03, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: nas01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: nas02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: aim01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: aim02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: aim03, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: aim04, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: aim05, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: aim06, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git03, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git04, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git05, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git06, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git07, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+  - {tag: git08, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
+
 dns:
   disable_cache: false
   disable_expire: true
-  servers: # DNS Providers, 个人偏好必须加密
+  strategy: prefer_ipv4
+  fakeip: { enabled: true, inet6_range: 2606:2606:8964:1126::/64, inet4_range: 188.114.96.0/16 }
+  servers: # DNS Providers, 个人偏好必须加密 #########################
     - { tag: dns_china, address: 1.2.4.8, detour: CENSORED }
     - { tag: dns_alidns, address: tls://223.5.5.5, detour: CENSORED }
     - { tag: dns_alidns2, address: tls://223.6.6.6, detour: CENSORED }
@@ -161,56 +180,55 @@ dns:
     - { tag: dns_tencent2, address: tls://1.12.12.12, detour: CENSORED}
     # - { tag: dns_google, address: tls://dns.google, detour: PROXY, address_resolver: dns_alidns }
     # 注意：这个DNS地址必须改
-    - { tag: dns_open, address: "https://example.sing-box-conf.io/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
-    # rcode://  success(No_Error); format_error; server_failure; 
-    # name_error(Domain_NoExist); not_implemented; refused(Query_Refused)
+    - { tag: dns_open, address: "https://example.cfworkers.pages.dev/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
+    # rcode://  success(No_error); format_error; server_failure; 
+    # name_error(Domain_inexist); not_implemented; refused(Query_block)
     - { tag: dns_block, address: rcode://name_error }
     - { tag: dns_fakeip, address: fakeip }
-  rules:
+    - { tag: dns_local, address: local }
+  rules: ############################################################
     # - { outbound: any, server: dns_alidns }
     - { clash_mode: Direct, server: dns_alidns }
     - { clash_mode: Global, server: dns_fakeip, rewrite_ttl: 1 }
-    - { rule_set: geosite-ads, server: dns_block }
-    - { inbound: tun-in, query_type: [A,AAAA], server: dns_fakeip, rewrite_ttl: 1 }
+    # - { domain_keyword: connecttest, server: dns_local}
+    - { rule_set: geosite-ads, server: dns_block}
+    - { domain_keyword: firebase, server: dns_block}
+    - { query_type: [A,AAAA], server: dns_fakeip, rewrite_ttl: 1 } # 出问题了改这里
     - { rule_set: geosite-cn, server: dns_tencent2 }
     # - { outbound: CENSORED, server: dns_alidns}
     # - { outbound: PROXY, server: dns_open}
   final: dns_open
-  strategy: prefer_ipv4
-  # fakeip: { enabled: true, inet4_range: 198.18.192.0/17, inet6_range: fc00::/18 }
-  fakeip: { enabled: true, inet4_range: 188.114.96.0/16, inet6_range: 2606:2606:8964:1126::/64 }
 
 route:
   auto_detect_interface: true
   override_android_vpn: true
   rule_set: # Rule Providers
-   - { tag: geoip-cn,     url: https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: google,       url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: googlefcm,    url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-googlefcm.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: geosite-cn,   url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: geosite-ads,  url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: ads,          url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ads.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: aintelligence,url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: applications, url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/applications.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: microsoft-cn, url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/microsoft-cn.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: apple-cn,     url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/apple-cn.srs, download_detour: PROXY, format: binary, type: remote}
-   # - { tag: google-cn,    url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/google-cn.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: games-cn,     url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/games-cn.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: networktest,  url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/networktest.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: proxy,        url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/proxy.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: cn,           url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/cn.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: telegramip,   url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/telegramip.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: youtube,      url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/youtube.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: netflix,      url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/netflix.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: netflixip,    url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/netflixip.srs, download_detour: PROXY, format: binary, type: remote}
-   - { tag: cnip,         url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/cnip.srs, download_detour: PROXY, format: binary, type: remote}
+   - { tag: geoip-cn,     url: https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs                   , download_detour: PROXY, format: binary, type: remote}
+   - { tag: google,       url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs           , download_detour: PROXY, format: binary, type: remote}
+   - { tag: googlefcm,    url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-googlefcm.srs        , download_detour: PROXY, format: binary, type: remote}
+   - { tag: geosite-cn,   url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs   , download_detour: PROXY, format: binary, type: remote}
+   - { tag: geosite-ads,  url: https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs , download_detour: PROXY, format: binary, type: remote}
+   - { tag: ads,          url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ads.srs          , download_detour: PROXY, format: binary, type: remote}
+   - { tag: aintelligence,url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/ai.srs           , download_detour: PROXY, format: binary, type: remote}
+   - { tag: applications, url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/applications.srs , download_detour: PROXY, format: binary, type: remote}
+   - { tag: microsoft-cn, url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/microsoft-cn.srs , download_detour: PROXY, format: binary, type: remote}
+   - { tag: apple-cn,     url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/apple-cn.srs     , download_detour: PROXY, format: binary, type: remote}
+  #- { tag: games-cn,     url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/games-cn.srs     , download_detour: PROXY, format: binary, type: remote}
+   - { tag: networktest,  url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/networktest.srs  , download_detour: PROXY, format: binary, type: remote}
+   - { tag: proxy,        url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/proxy.srs        , download_detour: PROXY, format: binary, type: remote}
+   - { tag: cn,           url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/cn.srs           , download_detour: PROXY, format: binary, type: remote}
+   - { tag: telegramip,   url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/telegramip.srs   , download_detour: PROXY, format: binary, type: remote}
+   - { tag: youtube,      url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/youtube.srs      , download_detour: PROXY, format: binary, type: remote}
+   - { tag: netflix,      url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/netflix.srs      , download_detour: PROXY, format: binary, type: remote}
+   - { tag: netflixip,    url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/netflixip.srs    , download_detour: PROXY, format: binary, type: remote}
+   - { tag: cnip,         url: https://raw.githubusercontent.com/DustinWin/ruleset_geodata/sing-box-ruleset/cnip.srs         , download_detour: PROXY, format: binary, type: remote}
   final: PROXY # 回落
   rules:
-    - outbound: ADSPAM # 来自手机系统的矢
+    - outbound: ADSPAM # MIUI矢, 广告拦截
       type: logical
       mode: or
       invert: false
-      rules:  # MIUI Privacy
+      rules:  # MIUI Privacy, 基础广告拦截
         - package_name: 
           - com.xiaomi.xmsf
           - com.miui.securityadd
@@ -232,9 +250,10 @@ route:
           - com.qualcomm.qti.cne
           - com.qualcomm.wfd.service
           - com.sohu.inputmethod.sogou.xiaomi
-        - domain_suffix:
+        - domain_keyword:
+        # - domain_suffix:
           # https://github.com/DustinWin/ruleset_geodata
-          # 1.8+的domain_suffix:.baidu.com。先对付用着
+          # 1.8 的 domain_suffix:.baidu.com。先对付用着
           - installer.miui.com
           - a0.app.xiaomi.com
           - etl-xlmc-ssl.sandai.net
@@ -293,74 +312,87 @@ route:
           - sngmta.qq.com
           - stat.y.qq.com
           - trace.qq.com
-        - domain_keyword:
+        # - domain_keyword:
           - avlyun # avlyun.com 小米用的杀软，绝对没用。。。
           - tmfsdk # tmfsdk.m.qq.com
           - wxsnsdy # wxsnsdy.wxs.qq.com
           - googleads
           - tracking.miui
-    - { outbound: ADSPAM , rule_set: [ geosite-ads ]} # 基础广告拦截
-    - { protocol: [ dns ], outbound: DNSOUT }
+          # https://github.com/zqzess/rule_for_quantumultX/blob/master/Clash/clash_premium_android.yaml
+        - rule_set: [ geosite-ads ] # ,ads
+    - { protocol: [ dns ], outbound: DNSOUT } # - { inbound: dns-in, outbound: DNSOUT }
+    - { clash_mode: Direct, outbound: NOPROXY}
+    - { clash_mode: Global, outbound: PROXY }
     - { ip_is_private: true, outbound: NOPROXY } # 私有网络
-    - { clash_mode: Direct, outbound: NOPROXY } # Clash API兼容
-    - { clash_mode: Global, outbound: PROXY } # Clash API兼容
-    - { port_range: [ "6881:6889" ], outbound: CENSORED } # BT流量直连，好像只有机场在乎这个
-    # The default rule uses the following matching logic:
-    # 地址& (domain|domain_suffix|domain_keyword|domain_regex|ip_cidr|ip_is_private)&
-    # 端口& (port|port_range)&
-    # 来源& (source_ip_cidr|source_ip_is_private)&(source_port|source_port_range)&
-    # 其他  other fields (process_name, package_name), 遵循&&而不是||。
-    - outbound: REJECT # 853, UDP443, STUN
+    # - { port_range: [ "6881:6889" ], outbound: CENSORED } # BT流量直连，好像机场在乎这个
+    # The default rule matching logic:
+     # 地址& (domain|domain_suffix|domain_keyword|domain_regex|ip_cidr|ip_is_private)&
+     # 端口& (port|port_range)&
+     # 来源& (source_ip_cidr|source_ip_is_private)&(source_port|source_port_range)&
+     # 其他  other fields (process_name, package_name), 遵循&&而不是||。
+    # - outbound: REJECT # 853, UDP443, STUN
+     #   type: logical
+     #   mode: or
+     #   rules:
+     #     - {port: 853}
+     #     - {network: udp, port: 443}
+     #     - {protocol: stun}
+    - outbound: Telegram-Route # TG 进程 + (telegramip)
+      rules: 
+        - process_name: [Telegram.exe] # 我靠，大小写敏感，Windows下这要命啊
+        - package_name: 
+          - tw.nekomimi.nekogram
+          - org.telegram.messenger.web
+          - org.telegram.messenger
+        - rule_set: [telegramip]
       type: logical
       mode: or
-      rules:
-        - {port: 853}
-        - {network: udp, port: 443}
-        - {protocol: stun}
-    - outbound: CENSORED # Sing-Box 官方配置提供的中国配置
-      rule_set:
-        - geoip-cn
-        - geosite-cn
-    - outbound: Telegram-Route # TG先按进程匹配就行 (我靠，居然大小写敏感，Windows下这要命啊)
-      rules: [process_name: [Telegram.exe], package_name: [tw.nekomimi.nekogram, org.telegram.messenger.web, org.telegram.messenger], rule_set: [telegramip]]
-      type: logical
-      mode: or
-    - outbound: Youtube-Route
+    - outbound: Youtube-Route # 油管 进程 + (youtube)
       type: logical
       mode: or
       rules:
         - package_name: [com.google.android.youtube]
-        - rule_set: youtube
-    - outbound: Google-Route # 谷歌 进程匹配
+        - rule_set: [youtube]
+    - outbound: Google-Route # 谷歌 进程 + (google,googlefcm)
       type: logical
       mode: or
       rules:
-        - package_name: [com.android.vending,com.google.android.tts,com.google.android.apps.translate,com.google.android.inputmethod.latin]
+        - package_name: 
+          - com.android.vending
+          - com.google.android.tts
+          - com.google.android.gms
+          - com.google.android.apps.translate
+          - com.google.android.inputmethod.latin
         - rule_set: [google, googlefcm]
-    - outbound: Microsoft-Route # 主要是进程匹配
+    - outbound: Microsoft-Route # 微软 进程 + (microsoft-cn)
       rules: 
         - process_name: [OneNote.exe,OneDrive.exe]
-        - package_name: [com.microsoft.copilot,com.microsoft.skydrive,com.microsoft.office.onenote,com.github.jing332.tts_server_android]
+        - package_name: 
+          - com.microsoft.copilot
+          - com.microsoft.skydrive
+          - com.microsoft.office.onenote
+          - com.github.jing332.tts_server_android
         - domain_keyword: [www.bing.com, copilot.microsoft.com]
+        - rule_set: [microsoft-cn] # 国内可用的微软服务
       type: logical
       mode: or
-    - outbound: AI-Route
+    - outbound: AI-Route # (aintelligence)
       rule_set: aintelligence
-    - outbound: Netflix-Route # 谷歌 进程匹配
+    - outbound: Apple-Route # (apple-cn)
+      rule_set: apple-cn  # 国内可用的苹果服务
+    - outbound: Netflix-Route # 奈菲 进程 + (netflix,netflixip)
       type: logical
       mode: or
       rules:
         - package_name: [com.netflix.mediaclient]
         - rule_set: [netflix, netflixip]
-
-    # - { rule_set: [ ads ], outbound: ADSPAM } #// 自定义规则优先放前面
-    # - { rule_set: [ applications ], outbound: CENSORED } # 直连软件, 基于ProcessName
-    - { rule_set: [ microsoft-cn ], outbound: Microsoft-Route } # 国内可用的微软服务
-    - { rule_set: [ apple-cn ], outbound: Apple-Route } # 国内可用的苹果服务
-    # - { rule_set: [ google-cn ], outbound: Google-Route } # 谷歌服务
+    - outbound: CENSORED # (geoip-cn,geosite-cn)
+      rule_set:
+        - geoip-cn
+        - geosite-cn
+    # - { rule_set: [ applications ], outbound: NOPROXY } # 直连软件, 基于ProcessName
     # - { rule_set: [ games-cn ], outbound: MANUAL } # 游戏平台
     # - { rule_set: [ networktest ], outbound: PROXY } # 网络测试
     - { rule_set: [ proxy ], outbound: PROXY } # 代理域名
     - { rule_set: [ cn ], outbound: CENSORED } # 直连
-    # - { rule_set: [ telegramip ], outbound: PROXY } # Telegrams
     - { rule_set: [ cnip ], outbound: CENSORED } # 国内 IP
