@@ -1,8 +1,6 @@
 # sing-box version 1.8.11 / 1.9.0-rc.7
-# 以下注释给CF Worker读取，勿改变格式（singbox{...})
-# 用于解决yaml-json锚点(<<)转换导致singbox不认配置。但会导致yaml/json不等价。
+# worker 做一个parser解析以下注释，json仅返回以下内容，以支持yaml扩展。
 # singbox{log,dns,ntp,inbounds,outbounds,route, experimental}
-
 log: {level: info, timestamp: false, disabled: false} # output: "box.log"
 inbounds: # TUN模式
   - tag: tun-in # sudo needed on windows .. 
@@ -14,8 +12,8 @@ inbounds: # TUN模式
     stack: mixed
     sniff: true
     sniff_override_destination: true
-    inet4_address: 198.18.89.64/30 # https://en.wikipedia.org/wiki/Reserved_IP_addresses
-    inet6_address: 64:ff9b:1:8964:1126:8866::6/126
+    inet4_address: 198.18.96.4/30 # https://en.wikipedia.org/wiki/Reserved_IP_addresses
+    inet6_address: 64:ff9b:1:8964:1126:8866:1d1:6/126
     mtu: 1400 # https://en.wikipedia.org/wiki/Maximum_transmission_unit
     exclude_package: # 安卓, 以下Apps绕过代理
       # https://github.com/yangchuansheng/sing-box/blob/main/config-example.json
@@ -62,6 +60,7 @@ inbounds: # TUN模式
       - com.unnoo.quan # 知识星球
       - com.tencent.wemeet.app # 腾讯会议
       - com.tencent.soter.soterserver
+      - com.github.jing332.tts_server_android # 微软TTS-Server
       #- com.duolingo # 多邻国，需要去广告
   # - tag: mixed-in
   #   listen: 127.0.0.1 # 这个就不用了吧，windows下tun很好用
@@ -94,15 +93,26 @@ ntp: # 关了，需要UDP
   interval: 30m
   detour: NOPROXY  # UDP support needed
 
-# proxies: &proxies # 哎sing-box json不允许多写
-  # - tag: proxy0
-  #   type: vless
-  #   uuid: xx
+oblist:
+ # 这个给AUTO/MANUAL用法
+ sys: &includeall [proxy0,
+ gitap,gitms
+ ]
+ # 这个给XXX-Route用，可能要选地区的那种。
+ route: &routeall [PROXY, NOPROXY, proxy0,
+ gitap,gitms
+ ]
+ # 这个doh自己搞一个，或者改下面引用，要能DIRECT的
+ mydoh: &mydoh "https://example.pages.dev/_forward/https://dns.google/dns-query"
 
 # PROXY CENSORED ADSPAM DNSOUT REJECT NOPROXY
 # Apple-Route  iCloud-Route  Microsoft-Route GamerTW-Route AI-Route
 # Google-Route Youtube-Route Telegram-Route  Netflix-Route 
 outbounds: # 策略和策略组
+  - {tag: proxy0,server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: gitap ,server: examply.io , server_port: 443, tls: {enabled: true}, transport: {path: /, type: ws}, type: vless, uuid: _}
+  - {tag: gitms ,server: examplk.io , server_port: 443, tls: {enabled: true}, transport: {path: /, type: ws}, type: vless, uuid: _}
+
  # 出口、内置出口包装
   - {tag: REJECT, type: block} # 策略：拒绝
   - {tag: NOPROXY, type: direct, domain_strategy: prefer_ipv4} # 策略：直连, NOPROXY = DIRECT, CENSORED = CN
@@ -112,67 +122,24 @@ outbounds: # 策略和策略组
   - {tag: ADSPAM, type: selector, default: REJECT, outbounds: [REJECT,NOPROXY,CENSORED,PROXY]} # 广告、隐私保护出口
 
  # 以下是代理列表、路由出口选择
-  - {tag: MANUAL, type: selector, default: proxy0, outbounds: [proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: AUTO, type: urltest, url: http://github.com , interval: 6m, tolerance: 100 , idle_timeout: 30m, outbounds: [proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
+  - {tag: MANUAL, type: selector, default: proxy0, outbounds: *includeall}
+  - {tag: AUTO, type: urltest, url: http://github.com , interval: 6m, tolerance: 100 , idle_timeout: 30m, outbounds: *includeall}
 
-  - {tag: Apple-Route, default: NOPROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: iCloud-Route, default: NOPROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: Microsoft-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: AI-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: Telegram-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: Google-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: Youtube-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: Netflix-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
-  - {tag: GamerTW-Route, default: PROXY, type: selector, outbounds: [PROXY, NOPROXY, proxy0
-  ,gitap,gitms,drv01,drv02,drv03,nas01,nas02,aim01,aim02,aim03,aim04,aim05,aim06,git01,git02,git03,git04,git05,git06,git07,git08
-  ]}
+  - {tag: Apple-Route, default: NOPROXY, type: selector, outbounds: *routeall}
+  - {tag: iCloud-Route, default: NOPROXY, type: selector, outbounds: *routeall}
+  - {tag: Microsoft-Route, default: PROXY, type: selector, outbounds: *routeall}
+  - {tag: AI-Route, default: PROXY, type: selector, outbounds: *routeall}
+  - {tag: Telegram-Route, default: PROXY, type: selector, outbounds: *routeall}
+  - {tag: Google-Route, default: PROXY, type: selector, outbounds: *routeall}
+  - {tag: Youtube-Route, default: PROXY, type: selector, outbounds: *routeall}
+  - {tag: Netflix-Route, default: PROXY, type: selector, outbounds: *routeall}
+  - {tag: GamerTW-Route, default: PROXY, type: selector, outbounds: *routeall}
  # 
-  - {tag: proxy0,server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: gitap, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: gitms, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: drv01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: drv02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: drv03, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: nas01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: nas02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: aim01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: aim02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: aim03, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: aim04, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: aim05, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: aim06, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git01, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git02, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git03, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git04, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git05, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git06, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git07, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
-  - {tag: git08, server: example.io , server_port: 443, tls: {enabled: true}, transport: {path: "/", type: ws}, type: vless, uuid: _}
 
+ 
 dns:
   disable_cache: false
-  disable_expire: true
+  disable_expire: false
   strategy: prefer_ipv4
   fakeip: { enabled: true, inet6_range: 2606:2606:8964:1126::/64, inet4_range: 188.114.96.0/16 }
   servers: # DNS Providers, 个人偏好必须加密 #########################
@@ -183,7 +150,7 @@ dns:
     - { tag: dns_tencent2, address: tls://1.12.12.12, detour: CENSORED}
     # - { tag: dns_google, address: tls://dns.google, detour: PROXY, address_resolver: dns_alidns }
     # 注意：这个DNS地址必须改
-    - { tag: dns_open, address: "https://example.cfworkers.pages.dev/_forward/https://dns.google/dns-query", detour: NOPROXY, address_resolver: dns_tencent }
+    - { tag: dns_open, address: *mydoh, detour: NOPROXY, address_resolver: dns_tencent }
     # rcode://  success(No_error); format_error; server_failure; 
     # name_error(Domain_inexist); not_implemented; refused(Query_block)
     - { tag: dns_block, address: rcode://name_error }
@@ -196,6 +163,7 @@ dns:
     # - { domain_keyword: connecttest, server: dns_local}
     - { rule_set: geosite-ads, server: dns_block}
     - { domain_keyword: firebase, server: dns_block}
+    # 加条inbound=tun再fakeip吧要不，需要测试一下sysproxy
     - { query_type: [A,AAAA], server: dns_fakeip, rewrite_ttl: 1 } # 出问题了改这里
     - { rule_set: geosite-cn, server: dns_tencent2 }
     # - { outbound: CENSORED, server: dns_alidns}
@@ -243,7 +211,7 @@ route:
           - com.miui.packageinstaller
           - com.xiaomi.mircs
           - com.xiaomi.joyose
-          - com.xiaomi.powerchecker
+          #- com.xiaomi.powerchecker
           - com.miui.phrase
           - com.miui.vpnsdkmanager
           - com.miui.cloudservice
@@ -340,7 +308,7 @@ route:
      #     - {port: 853}
      #     - {network: udp, port: 443}
      #     - {protocol: stun}
-    - outbound: Telegram-Route # TG 进程 + (telegramip)
+    - outbound: Telegram-Route # TG 进程 + [telegramip]
       rules: 
         - process_name: [Telegram.exe] # 我靠，大小写敏感，Windows下这要命啊
         - package_name: 
@@ -350,13 +318,13 @@ route:
         - rule_set: [telegramip]
       type: logical
       mode: or
-    - outbound: Youtube-Route # 油管 进程 + (youtube)
+    - outbound: Youtube-Route # 油管 进程 + [youtube]
       type: logical
       mode: or
       rules:
         - package_name: [com.google.android.youtube]
         - rule_set: [youtube]
-    - outbound: Google-Route # 谷歌 进程 + (google,googlefcm)
+    - outbound: Google-Route # 谷歌 进程 + [google,googlefcm]
       type: logical
       mode: or
       rules:
@@ -367,29 +335,28 @@ route:
           - com.google.android.apps.translate
           - com.google.android.inputmethod.latin
         - rule_set: [google, googlefcm]
-    - outbound: Microsoft-Route # 微软 进程 + (microsoft-cn)
+    - outbound: Microsoft-Route # 微软 进程 + [microsoft-cn]
       rules: 
         - process_name: [OneNote.exe,OneDrive.exe]
         - package_name: 
           - com.microsoft.copilot
           - com.microsoft.skydrive
           - com.microsoft.office.onenote
-          - com.github.jing332.tts_server_android
         - domain_keyword: [www.bing.com, copilot.microsoft.com]
         - rule_set: [microsoft-cn] # 国内可用的微软服务
       type: logical
       mode: or
-    - outbound: AI-Route # (aintelligence)
+    - outbound: AI-Route # [aintelligence]
       rule_set: aintelligence
-    - outbound: Apple-Route # (apple-cn)
+    - outbound: Apple-Route # [apple-cn]
       rule_set: apple-cn  # 国内可用的苹果服务
-    - outbound: Netflix-Route # 奈菲 进程 + (netflix,netflixip)
+    - outbound: Netflix-Route # 奈菲 进程 + [netflix,netflixip]
       type: logical
       mode: or
       rules:
         - package_name: [com.netflix.mediaclient]
         - rule_set: [netflix, netflixip]
-    - outbound: CENSORED # (geoip-cn,geosite-cn)
+    - outbound: CENSORED # [geoip-cn,geosite-cn]
       rule_set:
         - geoip-cn
         - geosite-cn
