@@ -1,18 +1,25 @@
-# sing-box 配置文件 YAML版，可直接转为json
+# sing-box 配置文件 YAML版，可转为json
 ### # 可以日常使用了，需要自己改节点
+（cf worker 这个js需要改，需要改。不完善，但能用）
 
-从yaml"编译"为json（yaml可以转为等价json）. 使用示例
+原理: yaml/json在不使用<<锚点时可以等价转换(利用jsonyaml.py, [该实现见旧Branch](https://github.com/inko16/sing-box-conf-yaml/tree/jsonyaml-equal))。旧Branch的实现非常简洁，仅使用最基础的yaml转换json并直接交给singbox使用。
+
+但当yaml中使用了<<这种锚点方式进行引用，简写重复部分时，被复制的地方也会写入json。而singbox目前好像还不可以忽略json中的无意义参数（提示的是error而不是warning），以至于不能像Clash那样写出自由飘逸的配置。
+
+于是我在yaml里写了一行注释，这是singbox文档给出的json结构。
 ```
-# bash on windows(recommended)(admin needed):
+# singbox{log,dns,ntp,inbounds,outbounds,route,experimental}
+```
+并在 [worker](yamljson.cfworker.js) 中处理完yaml-json后，仅将以上内容返回，也就是以上内容外面的所有锚点内容全部舍弃。这样可以提供一定程度的自由度，以及可以跟随singbox对配置文件结构更新。
 
-./jsonyaml.py conf.yaml min > $TMP/singbox-test.json && \
-./sing-box run -c $TMP/singbox-test.json
-
-# also bash on windows(admin), with cf worker yaml-json
+####  从yaml"编译"为json（yaml可以转为等价json）. 使用示例
+```
+# bash on windows(admin), with cf worker yaml-json filter
 curl https://a.pages.dev/yamljson/a.github.io/conf/sing.yaml -o $TMP/singtmp.json && ~/singbox/sing-box run -c $TMP/singtmp.json
 # for your profile security you need to host it safely. this is just an example
 
 ```
+#####  yaml转为等价json见 [branch jsonyaml-equal](https://github.com/inko16/sing-box-conf-yaml/tree/jsonyaml-equal) 分支
 ---
 - 默认使用tun模式，Windows下需要管理员权限，Android下正常工作。mixed模式(系统代理)好久没用了。
 ### 进度
@@ -34,7 +41,7 @@ curl https://a.pages.dev/yamljson/a.github.io/conf/sing.yaml -o $TMP/singtmp.jso
 ---
 ### 吐槽：
 - yaml json明明差不多，人家小猫咪配置能写的那么舒服，这音乐盒一大堆括号看着都头疼，音乐盒何必用json呢
-- 音乐盒你官方版为什么不搞node provider啊喂，json还没yaml灵活，yaml里引入写个花活还给我报错呜
+- 音乐盒你官方版为什么不搞node provider啊喂，json还没yaml灵活，yaml里引入写个花活还给我报错呜（这个branch就尽量解决一下这个问题）
 - 吐槽归吐槽，音乐盒确实还是牛逼
 ---
 
@@ -51,6 +58,7 @@ curl https://a.pages.dev/yamljson/a.github.io/conf/sing.yaml -o $TMP/singtmp.jso
 ---
 本地用Python的pyyaml转换json示例：
 jsonyaml.py可以清晰看到json和yaml几乎是同一个东西，但可读性一个天上一个地下。
+注：由于锚点转换会造成json/yaml不等价，该python工具在本branch仅测试用。详见 [branch jsonyaml-equal](https://github.com/inko16/sing-box-conf-yaml/tree/jsonyaml-equal)
 ```
 # pip install pyyaml
 jsonyaml.py a.json > a.yaml
@@ -61,5 +69,3 @@ jsonyaml.py > a.yaml
 Right Click (Paste json), Enter(New Line)
 Ctrl+Z ^Z(EOF) Enter
 ```
----
-cf worker 那个js需要改，需要改。
