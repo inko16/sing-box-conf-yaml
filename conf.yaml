@@ -1,4 +1,7 @@
 # sing-box version 1.8.11 / 1.9.0-rc.7
+# 以下注释给CF Worker读取，勿改变格式（singbox{...})
+# 用于解决yaml-json锚点(<<)转换导致singbox不认配置。但会导致yaml/json不等价。
+# singbox{log,dns,ntp,inbounds,outbounds,route, experimental}
 
 log: {level: info, timestamp: false, disabled: false} # output: "box.log"
 inbounds: # TUN模式
